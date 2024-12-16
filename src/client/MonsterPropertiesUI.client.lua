@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local issd = 2
 
 -- Assume we have a RemoteFunction to get monster properties
 local getMonsterPropertiesFunc = ReplicatedStorage:WaitForChild("GetMonsterProperties")
