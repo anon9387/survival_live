@@ -21,6 +21,7 @@ if workspace:FindFirstChild("Meats") then
     for _, meat in pairs(workspace.Meats:GetChildren()) do
         local clonedMeat = meat:Clone()
         clonedMeat.Parent = meatsFolder
+        meat:Destroy() -- Destroy the original meat after cloning
     end
 end
 

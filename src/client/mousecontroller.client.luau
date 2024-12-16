@@ -94,7 +94,7 @@ RunService.RenderStepped:Connect(function()
     
     -- Check if mouse is hovering over Blue folder
     local target = mouse.Target
-    if target and target:IsDescendantOf(Workspace.UnlockableDoors.Blue) then
+    if target and target:IsDescendantOf(Workspace:WaitForChild("UnlockableDoors"):WaitForChild("Blue")) then
         cursor.Image, cursor.Size = blueDoorCursorImage, blueDoorCursorSize
     else
         cursor.Image, cursor.Size = defaultCursorImage, defaultCursorSize

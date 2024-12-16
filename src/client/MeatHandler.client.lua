@@ -17,6 +17,9 @@ local PlayerData = {
     OwnedMeat = {}
 }
 
+-- At the top of the file with other variables
+local promptConnections = {} -- Store connections by meat instance
+
 -- Function to setup meat animation
 local function setupMeatAnimation(meat)
     if not meat then return end
@@ -37,16 +40,22 @@ local function setupMeatAnimation(meat)
     end)
 end
 
--- Simplified function to setup proximity prompt for a meat
+-- Modified setupMeatPrompt function
 local function setupMeatPrompt(meat)
-
     if meat:IsA("StringValue") then return end
+    
     -- If player already owns this meat, remove it from workspace
     if table.find(PlayerData.OwnedMeat, meat.Name) then
         if Meats:FindFirstChild(meat.Name) then
             Meats:FindFirstChild(meat.Name):Destroy()
         end
         return
+    end
+    
+    -- Cleanup old connection if it exists
+    if promptConnections[meat] then
+        promptConnections[meat]:Disconnect()
+        promptConnections[meat] = nil
     end
     
     -- Create or get proximity prompt
@@ -58,10 +67,11 @@ local function setupMeatPrompt(meat)
         prompt.Parent = meat
     end
     
-    -- Connect prompt trigger
-    prompt.Triggered:Connect(function()
+    -- Connect prompt trigger and store the connection
+    promptConnections[meat] = prompt.Triggered:Connect(function()
         CollectMeat:FireServer(meat.Name)
         meat:Destroy()
+        promptConnections[meat] = nil -- Clean up the connection reference
     end)
     
     -- Setup animation
@@ -102,4 +112,11 @@ end)
 
 -- Setup prompts for new meats
 Meats.ChildAdded:Connect(setupMeatPrompt)
+
+Meats.ChildRemoved:Connect(function(meat)
+    if promptConnections[meat] then
+        promptConnections[meat]:Disconnect()
+        promptConnections[meat] = nil
+    end
+end)
 
