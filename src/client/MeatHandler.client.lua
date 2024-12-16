@@ -6,6 +6,7 @@ local player = Players.LocalPlayer
 local Meats = Workspace:WaitForChild("Meats")
 local ClonedMeatFolder = ReplicatedStorage:WaitForChild("MeatsClones")
 
+local sf = 3234
 -- Cache remote events
 local DataLoaded = ReplicatedStorage:WaitForChild("DataLoaded")
 local UpdateMeat = ReplicatedStorage:WaitForChild("UpdateMeat")
