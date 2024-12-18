@@ -200,4 +200,65 @@ exitButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Get Gadgets frame and set initial visibility
+local gadgetsFrame = mainGui:WaitForChild("Gadgets")
+gadgetsFrame.Visible = false
+
+-- Get shop cylinder reference
+local shopCylinder = workspace:WaitForChild("GadgetShop"):WaitForChild("InnerCylinder")
+
+-- Create tween goals for gadgets frame
+local gadgetsOpenGoal = {
+    Size = UDim2.new(0.6, 0, 0.6, 0),
+    Position = UDim2.new(0.5, 0, 0.5, 0)
+}
+local gadgetsClosedGoal = {
+    Size = UDim2.new(0, 0, 0, 0),
+    Position = UDim2.new(0.5, 0, 0.5, 0)
+}
+
+-- Function to animate gadgets frame
+local function toggleGadgetsFrame(show)
+    gadgetsFrame.Visible = true
+    
+    local targetGoal = show and gadgetsOpenGoal or gadgetsClosedGoal
+    local tween = TweenService:Create(gadgetsFrame, tweenInfo, targetGoal)
+    
+    tween:Play()
+    
+    if not show then
+        tween.Completed:Connect(function()
+            gadgetsFrame.Visible = false
+        end)
+    end
+end
+
+-- Function to check if player is touching the cylinder
+local function updateGadgetsVisibility()
+    local character = player.Character
+    if not character then return end
+    
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+    
+    local touching = false
+    for _, part in ipairs(humanoidRootPart:GetTouchingParts()) do
+        if part == shopCylinder then
+            touching = true
+            break
+        end
+    end
+    
+    toggleGadgetsFrame(touching)
+end
+
+-- Connect to Touched and TouchEnded events
+shopCylinder.Touched:Connect(updateGadgetsVisibility)
+shopCylinder.TouchEnded:Connect(updateGadgetsVisibility)
+
+-- Update visibility when character spawns
+player.CharacterAdded:Connect(function()
+    updateGadgetsVisibility()
+end)
+
 print("Script loaded, button connected") -- Debug print
