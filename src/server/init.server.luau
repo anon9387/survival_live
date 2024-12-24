@@ -35,7 +35,7 @@ end
 local MonsterFSM = require(script.MonsterFSM)
 
 -- Wait for the monster to be added to the workspace
-local monster = workspace:WaitForChild("Monster")
+local monster = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Monster")
 
 -- Initialize the monster's FSM
 local monsterAI = MonsterFSM.new(monster)

@@ -19,6 +19,11 @@ debugRemote.Parent = ReplicatedStorage
 function MonsterFSM.new(monster)
     local self = setmetatable({}, MonsterFSM)
     
+    -- Clean up any existing monster in workspace first
+    if workspace:FindFirstChild("Monster") then
+        workspace.Monster:Destroy()
+    end
+    
     -- Add stuck detection variables
     self.lastCheckPosition = Vector3.new(0, 0, 0)
     self.stuckTime = 0
@@ -31,11 +36,23 @@ function MonsterFSM.new(monster)
     self.seeingPlayer = "None"
     
     -- References
-    self.monster = monster
-    self.humanoid = monster:WaitForChild("Humanoid")
-    self.rootPart = monster:WaitForChild("HumanoidRootPart")
+    self.monster = monster:Clone()  -- Clone the template monster
     self.waypointsFolder = workspace:WaitForChild("MonsterWaypoints")
     self.respawnPoints = workspace:WaitForChild("RespawnPoints")
+    
+    -- Get random respawn point for initial spawn
+    local respawnPoints = self.respawnPoints:GetChildren()
+    local randomPoint = respawnPoints[math.random(1, #respawnPoints)]
+    
+    -- Set initial position and parent to workspace
+    if randomPoint then
+        self.monster:PivotTo(randomPoint.CFrame + Vector3.new(0, 3, 0))
+        self.monster.Parent = workspace
+    end
+    
+    -- Get references to parts
+    self.humanoid = self.monster:WaitForChild("Humanoid")
+    self.rootPart = self.monster:WaitForChild("HumanoidRootPart")
     
     -- Set network owner to nil for server control
     self.rootPart:SetNetworkOwner(nil)
@@ -44,13 +61,13 @@ function MonsterFSM.new(monster)
     self.pathParams = {
         AgentHeight = 5,
         AgentRadius = 3,
-        AgentCanJump = true
+        AgentCanJump = false
     }
     
     -- Raycast setup
     self.rayParams = RaycastParams.new()
     self.rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-    self.rayParams.FilterDescendantsInstances = {monster}
+    self.rayParams.FilterDescendantsInstances = {self.monster}
     
     -- State variables
     self.lastPos = nil
