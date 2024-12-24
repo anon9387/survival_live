@@ -25,12 +25,22 @@ if workspace:FindFirstChild("Meats") then
     end
 end
 
-game.Players.PlayerAdded:Connect(function(player)
-    print("Player added:", player.Name)
-    player.CharacterAdded:Connect(function(character)
-        print("Character added for player:", player.Name)
-        character.Humanoid.Died:Connect(function()
-            print("Player died:", player.Name)
-        end)
-    end)
-end)
+
+
+
+
+
+--initialize the monster server
+
+local MonsterFSM = require(script.MonsterFSM)
+
+-- Wait for the monster to be added to the workspace
+local monster = workspace:WaitForChild("Monster")
+
+-- Initialize the monster's FSM
+local monsterAI = MonsterFSM.new(monster)
+
+-- Start the AI
+monsterAI:start()
+
+-- The FSM will handle everything else automatically! 
