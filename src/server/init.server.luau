@@ -27,20 +27,3 @@ end
 
 
 
-
-
-
---initialize the monster server
-
-local MonsterFSM = require(script.MonsterFSM)
-
--- Wait for the monster to be added to the workspace
-local monster = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Monster")
-
--- Initialize the monster's FSM
-local monsterAI = MonsterFSM.new(monster)
-
--- Start the AI
-monsterAI:start()
-
--- The FSM will handle everything else automatically! 
